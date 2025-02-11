@@ -11,8 +11,8 @@ const ChatInterface = ({ onGenerate, initialMode }: ChatInterfaceProps) => {
     {
       role: "assistant",
       content: initialMode
-        ? "Hi! I'm OMNI, your AI assistant. What workflow would you like me to create?"
-        : "I'm creating your workflow. What else can I help you with?",
+        ? "👋 Hi! I'm OMNI, your AI workflow assistant. Tell me what you'd like to automate and I'll create a seamless workflow for you."
+        : "✨ I'm building your workflow. Feel free to ask me anything about the process or request modifications.",
     },
   ]);
   const [input, setInput] = useState("");
@@ -31,7 +31,8 @@ const ChatInterface = ({ onGenerate, initialMode }: ChatInterfaceProps) => {
           ...prev,
           {
             role: "assistant",
-            content: "Generating your workflow...",
+            content:
+              "🔮 Analyzing your request and generating an optimized workflow...",
           },
         ]);
         onGenerate();
@@ -43,26 +44,28 @@ const ChatInterface = ({ onGenerate, initialMode }: ChatInterfaceProps) => {
 
   return (
     <div className="flex flex-col h-full">
-      <div className="flex-1 overflow-auto p-4 space-y-4">
+      <div className="flex-1 overflow-auto p-4 space-y-4 custom-scrollbar">
         {messages.map((message, i) => (
           <div
             key={i}
-            className={`flex ${message.role === "user" ? "justify-end" : "justify-start"}`}
+            className={`flex ${message.role === "user" ? "justify-end" : "justify-start"} animate-in fade-in slide-in-from-bottom-2 duration-300`}
           >
             <div
-              className={`max-w-[80%] p-3 rounded-lg ${
-                message.role === "user"
-                  ? "bg-gradient-to-r from-indigo-500 to-purple-500 text-white"
-                  : "bg-slate-700/50 text-slate-200"
-              }`}
+              className={`max-w-[80%] p-4 rounded-2xl shadow-lg backdrop-blur-sm font-mono text-[15px]
+                ${
+                  message.role === "user"
+                    ? "bg-gradient-to-br from-indigo-600/90 to-purple-600/90 text-white ring-1 ring-white/10"
+                    : "bg-slate-800/90 text-slate-100 ring-1 ring-white/10"
+                }
+              `}
             >
-              {message.content}
+              <p className="leading-relaxed tracking-wide">{message.content}</p>
             </div>
           </div>
         ))}
       </div>
       <div className="p-4 border-t border-slate-700/50">
-        <div className="flex items-center gap-2 bg-slate-700/30 rounded-lg p-2">
+        <div className="flex items-center gap-2 bg-slate-800/50 rounded-xl p-2 ring-1 ring-white/10">
           <input
             type="text"
             value={input}
@@ -71,13 +74,16 @@ const ChatInterface = ({ onGenerate, initialMode }: ChatInterfaceProps) => {
             placeholder={
               initialMode ? "Describe your workflow..." : "Type your message..."
             }
-            className="flex-1 bg-transparent outline-none text-white placeholder-slate-400"
+            className="flex-1 bg-transparent outline-none text-white placeholder-slate-400 px-2 py-1 font-mono text-[15px]"
           />
           <button
             onClick={handleSend}
-            className="p-2 rounded-lg hover:bg-slate-600/50 transition-colors"
+            className="p-2 rounded-lg bg-indigo-500/20 hover:bg-indigo-500/30 transition-colors group"
           >
-            <Send size={20} className="text-indigo-400" />
+            <Send
+              size={20}
+              className="text-indigo-400 group-hover:text-indigo-300 transition-colors"
+            />
           </button>
         </div>
       </div>
