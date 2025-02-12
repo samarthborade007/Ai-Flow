@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Send } from "lucide-react";
+import { useState, useRef } from "react";
+import { Send, Plus } from "lucide-react";
 
 interface ChatInterfaceProps {
   onGenerate: () => void;
@@ -16,6 +16,7 @@ const ChatInterface = ({ onGenerate, initialMode }: ChatInterfaceProps) => {
     },
   ]);
   const [input, setInput] = useState("");
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleSend = () => {
     if (!input.trim()) return;
@@ -40,6 +41,33 @@ const ChatInterface = ({ onGenerate, initialMode }: ChatInterfaceProps) => {
     }
 
     setInput("");
+  };
+
+  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      // Add a message showing the uploaded file
+      setMessages([
+        ...messages,
+        {
+          role: "user",
+          content: `📎 Uploaded: ${file.name} (${(file.size / 1024).toFixed(1)} KB)`,
+        },
+      ]);
+
+      // You can handle the file upload here
+      // For now, we'll just show a response message
+      setTimeout(() => {
+        setMessages((prev) => [
+          ...prev,
+          {
+            role: "assistant",
+            content:
+              "📄 I've received your file. I'll analyze its contents and incorporate it into the workflow. What would you like me to do with it?",
+          },
+        ]);
+      }, 1000);
+    }
   };
 
   return (
@@ -76,6 +104,21 @@ const ChatInterface = ({ onGenerate, initialMode }: ChatInterfaceProps) => {
             }
             className="flex-1 bg-transparent outline-none text-white placeholder-slate-400 px-2 py-1 font-mono text-[15px]"
           />
+          <input
+            type="file"
+            ref={fileInputRef}
+            onChange={handleFileUpload}
+            className="hidden"
+          />
+          <button
+            onClick={() => fileInputRef.current?.click()}
+            className="p-2 rounded-lg bg-indigo-500/20 hover:bg-indigo-500/30 transition-colors group"
+          >
+            <Plus
+              size={20}
+              className="text-indigo-400 group-hover:text-indigo-300 transition-colors"
+            />
+          </button>
           <button
             onClick={handleSend}
             className="p-2 rounded-lg bg-indigo-500/20 hover:bg-indigo-500/30 transition-colors group"
