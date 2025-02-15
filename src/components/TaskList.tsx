@@ -15,67 +15,82 @@ interface TaskListProps {
 
 const TaskList = ({ tasks, onStartTask, currentTaskId }: TaskListProps) => {
   return (
-    <div className="space-y-2">
-      {/* Section Headers */}
-      <div className="flex items-center justify-between mb-4">
-        <div className="flex items-center gap-2">
-          <div className="h-2 w-2 rounded-full bg-indigo-500" />
-          <h2 className="text-sm font-medium text-slate-200">IN PROGRESS</h2>
+    <div className="space-y-6">
+      {/* Task Header - Matches the screenshot */}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <div className="px-3 py-1 rounded-lg bg-indigo-500/20 text-indigo-400 font-mono text-sm">
+            OMN-1
+          </div>
+          <h2 className="text-lg font-medium text-slate-200">
+            Create a modern landing page with voice assistant preview
+          </h2>
         </div>
-        <button className="text-xs text-slate-400 hover:text-slate-300">
-          +
-        </button>
+        <span className="text-xs text-slate-500">
+          Last updated a minute ago
+        </span>
       </div>
 
       {/* Tasks */}
-      <div className="space-y-2">
+      <div className="space-y-4">
         {tasks.map((task) => (
-          <div
+          <button
             key={task.id}
-            className={`p-4 rounded-lg border ${task.status === "in_progress" ? "border-indigo-500/50 bg-indigo-500/10" : "border-slate-800 bg-slate-900/50"} backdrop-blur-sm`}
+            onClick={() => onStartTask(task.id)}
+            disabled={task.status === "done"}
+            className={`w-full text-left transition-all duration-200 ${
+              task.id === currentTaskId
+                ? "scale-[1.02] ring-2 ring-indigo-500/50"
+                : "hover:scale-[1.01] ring-1 ring-slate-800/50"
+            }`}
           >
-            <div className="flex items-start justify-between gap-4">
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2">
-                  <div className="flex-shrink-0 px-2 py-1 rounded bg-slate-800 text-xs font-mono text-slate-400">
-                    {task.id}
+            <div
+              className={`p-4 rounded-xl ${
+                task.id === currentTaskId
+                  ? "bg-indigo-500/10 backdrop-blur-sm"
+                  : "bg-slate-800/50 hover:bg-slate-800/70 backdrop-blur-sm"
+              }`}
+            >
+              <div className="flex items-start justify-between gap-4">
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-3 mb-2">
+                    <div className="flex-shrink-0 px-2 py-1 rounded-md bg-slate-900/50 text-xs font-mono text-slate-400">
+                      {task.id}
+                    </div>
+                    <h3 className="text-sm font-medium text-slate-200 truncate">
+                      {task.title}
+                    </h3>
                   </div>
-                  <h3 className="text-sm font-medium text-slate-200 truncate">
-                    {task.title}
-                  </h3>
+                  <p className="text-sm text-slate-400 line-clamp-2">
+                    {task.description}
+                  </p>
                 </div>
-                <p className="mt-1 text-sm text-slate-400 line-clamp-2">
-                  {task.description}
-                </p>
+                <div
+                  className={`flex-shrink-0 p-2 rounded-lg transition-colors ${
+                    task.id === currentTaskId
+                      ? "bg-indigo-500 text-white"
+                      : "bg-slate-900/50 text-slate-400"
+                  }`}
+                >
+                  <Play size={16} />
+                </div>
               </div>
-              <button
-                onClick={() => onStartTask(task.id)}
-                disabled={task.status === "done"}
-                className={`flex-shrink-0 p-2 rounded-lg transition-colors ${task.id === currentTaskId ? "bg-indigo-500 text-white" : "bg-slate-800 text-slate-400 hover:text-slate-300 hover:bg-slate-700"}`}
-              >
-                <Play size={16} />
-              </button>
             </div>
-          </div>
+          </button>
         ))}
       </div>
 
-      {/* To Do Section */}
+      {/* Activity Section */}
       <div className="mt-8">
-        <div className="flex items-center gap-2 mb-4">
-          <div className="h-2 w-2 rounded-full bg-slate-500" />
-          <h2 className="text-sm font-medium text-slate-200">TO DO</h2>
+        <h3 className="text-lg font-medium text-slate-200 mb-4">Activity</h3>
+        <div className="p-4 rounded-xl bg-slate-800/50 backdrop-blur-sm ring-1 ring-slate-800/50">
+          <div className="flex items-center gap-2 text-sm text-slate-400">
+            <div className="w-4 h-4 rounded-full border-2 border-slate-700 flex items-center justify-center">
+              <div className="w-1.5 h-1.5 rounded-full bg-slate-700" />
+            </div>
+            No history yet. Agent will document progress and key decisions here.
+          </div>
         </div>
-        {/* Todo tasks would go here */}
-      </div>
-
-      {/* Done Section */}
-      <div className="mt-8">
-        <div className="flex items-center gap-2 mb-4">
-          <div className="h-2 w-2 rounded-full bg-green-500" />
-          <h2 className="text-sm font-medium text-slate-200">DONE</h2>
-        </div>
-        {/* Completed tasks would go here */}
       </div>
     </div>
   );

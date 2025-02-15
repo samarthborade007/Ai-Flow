@@ -1,9 +1,8 @@
 import { useState } from "react";
 import GridBackground from "./GridBackground";
 import ChatInterface from "./ChatInterface";
-import WorkflowVisualization from "./WorkflowVisualization";
-import WorkflowCard from "./WorkflowCard";
 import TaskList from "./TaskList";
+import TaskDetails from "./TaskDetails";
 import { Github, Home as HomeIcon } from "lucide-react";
 
 const SAVED_TEMPLATES = [
@@ -50,7 +49,7 @@ const INITIAL_TASKS = [
     id: "OMN-1",
     title: "Create a modern landing page with voice assistant preview",
     description:
-      "Design and implement a sleek landing page that showcases the voice assistant capabilities",
+      "Design and implement a landing page (App.tsx) that introduces OMNI.ai with a preview of the voice assistant interface. Include a hero section showcasing the 3D avatar placeholder, key features, and a clear value proposition for tech professionals. Add a prominent call-to-action for signing up. Use dark theme with glassmorphic elements and floating UI components for a futuristic feel.",
     status: "todo" as const,
   },
   {
@@ -94,9 +93,11 @@ function Home() {
     );
   };
 
+  const currentTask = tasks.find((task) => task.id === currentTaskId);
+
   return (
     <div className="w-screen h-screen relative bg-slate-950 text-white overflow-hidden">
-      {/* Header remains the same */}
+      {/* Header */}
       <header className="fixed top-0 left-0 right-0 h-16 bg-slate-900/50 backdrop-blur-md border-b border-slate-800/50 flex items-center justify-between px-6 z-50">
         <div className="flex items-center gap-3">
           <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center shadow-lg shadow-indigo-500/20 ring-1 ring-white/10">
@@ -164,13 +165,29 @@ function Home() {
               </h2>
               <div className="grid grid-cols-3 gap-4">
                 {SAVED_TEMPLATES.map((template) => (
-                  <WorkflowCard
+                  <button
                     key={template.id}
-                    title={template.title}
-                    description={template.description}
-                    gradient={template.gradient}
                     onClick={() => handleWorkflowSelect(template.id)}
-                  />
+                    className="w-full group hover:scale-[1.02] transition-all duration-200"
+                  >
+                    <div className="bg-slate-900/50 backdrop-blur-sm rounded-xl overflow-hidden ring-1 ring-white/10">
+                      <div
+                        className={`h-1.5 bg-gradient-to-r ${template.gradient}`}
+                      />
+                      <div className="p-4">
+                        <div className="flex items-start justify-between gap-2">
+                          <div className="flex-1 min-w-0">
+                            <h3 className="font-medium text-white truncate">
+                              {template.title}
+                            </h3>
+                            <p className="text-sm text-slate-400 mt-1 line-clamp-2">
+                              {template.description}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </button>
                 ))}
               </div>
             </div>
@@ -182,20 +199,39 @@ function Home() {
               </h2>
               <div className="grid grid-cols-2 gap-4">
                 {RECENT_WORKFLOWS.map((workflow) => (
-                  <WorkflowCard
+                  <button
                     key={workflow.id}
-                    title={workflow.title}
-                    description={workflow.description}
-                    date={workflow.date}
                     onClick={() => handleWorkflowSelect(workflow.id)}
-                  />
+                    className="w-full group hover:scale-[1.02] transition-all duration-200"
+                  >
+                    <div className="bg-slate-900/50 backdrop-blur-sm rounded-xl overflow-hidden ring-1 ring-white/10">
+                      <div className="p-4">
+                        <div className="flex items-start justify-between gap-2">
+                          <div className="flex-1 min-w-0">
+                            <h3 className="font-medium text-white truncate">
+                              {workflow.title}
+                            </h3>
+                            <p className="text-sm text-slate-400 mt-1 line-clamp-2">
+                              {workflow.description}
+                            </p>
+                          </div>
+                        </div>
+                        {workflow.date && (
+                          <div className="mt-3 flex items-center gap-2">
+                            <div className="text-xs text-slate-500">
+                              {workflow.date}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </button>
                 ))}
               </div>
             </div>
           </div>
         </div>
       ) : (
-        // Updated workflow page layout
         <div className="grid grid-cols-[400px,1fr,400px] h-[calc(100vh-64px)] mt-16 gap-6 p-6">
           {/* Chat Interface - Left Side */}
           <div className="rounded-xl border border-slate-800/50 bg-slate-900/50 backdrop-blur-sm p-4 ring-1 ring-white/10 relative z-10">
@@ -211,17 +247,20 @@ function Home() {
             />
           </div>
 
-          {/* Right Side - Avatar Space & Deploy Button */}
-          <div className="flex flex-col gap-4">
-            {/* Avatar Space */}
-            <div className="h-[300px] rounded-xl border border-slate-800/50 bg-slate-900/50 backdrop-blur-sm ring-1 ring-white/10 relative z-10">
-              {/* Avatar will be integrated here */}
-            </div>
-
-            {/* Deploy Button */}
-            <button className="w-full py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 transition-all duration-300 text-sm font-medium text-white shadow-lg shadow-emerald-500/20">
-              Deploy Workflow
-            </button>
+          {/* Right Side - Task Details */}
+          <div className="rounded-xl border border-slate-800/50 bg-slate-900/50 backdrop-blur-sm ring-1 ring-white/10 relative z-10 overflow-hidden">
+            {currentTask ? (
+              <TaskDetails
+                taskId={currentTask.id}
+                title={currentTask.title}
+                description={currentTask.description}
+                onClose={() => setCurrentTaskId(undefined)}
+              />
+            ) : (
+              <div className="h-full flex items-center justify-center text-slate-500">
+                Select a task to view details
+              </div>
+            )}
           </div>
         </div>
       )}
