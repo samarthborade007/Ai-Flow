@@ -1,5 +1,5 @@
 import { useState, useRef } from "react";
-import { Send, Plus } from "lucide-react";
+import { Send, Plus, Mic } from "lucide-react";
 
 interface ChatInterfaceProps {
   onGenerate: () => void;
@@ -16,17 +16,16 @@ const ChatInterface = ({ onGenerate, initialMode }: ChatInterfaceProps) => {
     },
   ]);
   const [input, setInput] = useState("");
+  const [isRecording, setIsRecording] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
 
   const handleSend = () => {
     if (!input.trim()) return;
 
-    // Add user message
     setMessages([...messages, { role: "user", content: input }]);
 
-    // If in initial mode, trigger workflow generation
     if (initialMode) {
-      // Add loading message
       setTimeout(() => {
         setMessages((prev) => [
           ...prev,
@@ -43,10 +42,43 @@ const ChatInterface = ({ onGenerate, initialMode }: ChatInterfaceProps) => {
     setInput("");
   };
 
+  const handleVoiceInput = async () => {
+    try {
+      if (!isRecording) {
+        const stream = await navigator.mediaDevices.getUserMedia({
+          audio: true,
+        });
+        const mediaRecorder = new MediaRecorder(stream);
+        mediaRecorderRef.current = mediaRecorder;
+
+        const audioChunks: BlobPart[] = [];
+
+        mediaRecorder.ondataavailable = (event) => {
+          audioChunks.push(event.data);
+        };
+
+        mediaRecorder.onstop = async () => {
+          const audioBlob = new Blob(audioChunks, { type: "audio/wav" });
+          // Here you would typically send this blob to a speech-to-text service
+          // For now, we'll just show a placeholder message
+          setInput("[Voice input processed]");
+          stream.getTracks().forEach((track) => track.stop());
+        };
+
+        mediaRecorder.start();
+        setIsRecording(true);
+      } else {
+        mediaRecorderRef.current?.stop();
+        setIsRecording(false);
+      }
+    } catch (error) {
+      console.error("Error accessing microphone:", error);
+    }
+  };
+
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
-      // Add a message showing the uploaded file
       setMessages([
         ...messages,
         {
@@ -55,8 +87,6 @@ const ChatInterface = ({ onGenerate, initialMode }: ChatInterfaceProps) => {
         },
       ]);
 
-      // You can handle the file upload here
-      // For now, we'll just show a response message
       setTimeout(() => {
         setMessages((prev) => [
           ...prev,
@@ -110,6 +140,12 @@ const ChatInterface = ({ onGenerate, initialMode }: ChatInterfaceProps) => {
             onChange={handleFileUpload}
             className="hidden"
           />
+          <button
+            onClick={handleVoiceInput}
+            className={`p-2 rounded-lg transition-colors ${isRecording ? "bg-red-500/20 text-red-400" : "bg-indigo-500/20 hover:bg-indigo-500/30 text-indigo-400 hover:text-indigo-300"} group`}
+          >
+            <Mic size={20} className="transition-colors" />
+          </button>
           <button
             onClick={() => fileInputRef.current?.click()}
             className="p-2 rounded-lg bg-indigo-500/20 hover:bg-indigo-500/30 transition-colors group"

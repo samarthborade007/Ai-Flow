@@ -100,38 +100,31 @@ html {
   }
 }
 
-/* Blob Animation */
-@keyframes blob {
-  0% {
-    transform: translate(0px, 0px) scale(1);
-  }
-  33% {
-    transform: translate(30px, -50px) scale(1.2);
-  }
-  66% {
-    transform: translate(-20px, 20px) scale(0.8);
-  }
-  100% {
-    transform: translate(0px, 0px) scale(1);
-  }
-}
-
 .animate-gradient {
   animation: gradient 15s ease infinite;
 }
 
-.animate-blob {
-  animation: blob 10s infinite cubic-bezier(0.4, 0, 0.2, 1);
+/* Animation Delays */
+.delay-150 {
+  animation-delay: 150ms;
 }
 
-.animation-delay-2000 {
-  animation-delay: 2s;
+.delay-300 {
+  animation-delay: 300ms;
 }
 
-.animation-delay-4000 {
-  animation-delay: 4s;
+.delay-450 {
+  animation-delay: 450ms;
 }
 
-.animation-delay-6000 {
-  animation-delay: 6s;
+.delay-600 {
+  animation-delay: 600ms;
+}
+
+.delay-750 {
+  animation-delay: 750ms;
+}
+
+.delay-900 {
+  animation-delay: 900ms;
 }

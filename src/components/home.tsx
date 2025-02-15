@@ -3,6 +3,7 @@ import GridBackground from "./GridBackground";
 import ChatInterface from "./ChatInterface";
 import WorkflowVisualization from "./WorkflowVisualization";
 import WorkflowCard from "./WorkflowCard";
+import TaskList from "./TaskList";
 import { Github, Home as HomeIcon } from "lucide-react";
 
 const SAVED_TEMPLATES = [
@@ -44,16 +45,58 @@ const RECENT_WORKFLOWS = [
   },
 ];
 
+const INITIAL_TASKS = [
+  {
+    id: "OMN-1",
+    title: "Create a modern landing page with voice assistant preview",
+    description:
+      "Design and implement a sleek landing page that showcases the voice assistant capabilities",
+    status: "todo" as const,
+  },
+  {
+    id: "OMN-2",
+    title: "Set up Firebase authentication with custom profile flow",
+    description:
+      "Implement secure user authentication using Firebase with a customized profile setup process",
+    status: "todo" as const,
+  },
+  {
+    id: "OMN-3",
+    title: "Build the core voice interaction interface with WebRTC",
+    description:
+      "Develop the main voice interaction system using WebRTC for real-time communication",
+    status: "todo" as const,
+  },
+  {
+    id: "OMN-4",
+    title: "Create the base 3D avatar system with basic animations",
+    description:
+      "Design and implement a 3D avatar system that responds to user interactions",
+    status: "todo" as const,
+  },
+];
+
 function Home() {
   const [workflowStarted, setWorkflowStarted] = useState(false);
+  const [currentTaskId, setCurrentTaskId] = useState<string>();
+  const [tasks, setTasks] = useState(INITIAL_TASKS);
 
   const handleWorkflowSelect = (id: number) => {
-    // Here you would load the specific workflow data
     setWorkflowStarted(true);
+  };
+
+  const handleStartTask = (taskId: string) => {
+    setCurrentTaskId(taskId);
+    setTasks(
+      tasks.map((task) =>
+        task.id === taskId ? { ...task, status: "in_progress" as const } : task,
+      ),
+    );
   };
 
   return (
     <div className="w-screen h-screen relative bg-slate-950 text-white overflow-hidden">
+      {/* Header remains the same */}
       <header className="fixed top-0 left-0 right-0 h-16 bg-slate-900/50 backdrop-blur-md border-b border-slate-800/50 flex items-center justify-between px-6 z-50">
         <div className="flex items-center gap-3">
           <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center shadow-lg shadow-indigo-500/20 ring-1 ring-white/10">
@@ -152,20 +195,33 @@ function Home() {
           </div>
         </div>
       ) : (
-        <div className="grid grid-cols-[300px,1fr,400px] h-[calc(100vh-64px)] mt-16 gap-6 p-6">
-          {/* Avatar Space */}
-          <div className="rounded-xl border border-slate-800/50 bg-slate-900/50 backdrop-blur-sm ring-1 ring-white/10 relative z-10">
-            {/* Avatar will be added here */}
-          </div>
-
-          {/* Chat Interface */}
+        // Updated workflow page layout
+        <div className="grid grid-cols-[400px,1fr,400px] h-[calc(100vh-64px)] mt-16 gap-6 p-6">
+          {/* Chat Interface - Left Side */}
           <div className="rounded-xl border border-slate-800/50 bg-slate-900/50 backdrop-blur-sm p-4 ring-1 ring-white/10 relative z-10">
             <ChatInterface onGenerate={() => {}} initialMode={false} />
           </div>
 
-          {/* Workflow Visualization */}
-          <div className="rounded-xl relative z-10">
-            <WorkflowVisualization />
+          {/* Task List - Middle */}
+          <div className="rounded-xl border border-slate-800/50 bg-slate-900/50 backdrop-blur-sm ring-1 ring-white/10 relative z-10 p-4 overflow-auto custom-scrollbar">
+            <TaskList
+              tasks={tasks}
+              onStartTask={handleStartTask}
+              currentTaskId={currentTaskId}
+            />
+          </div>
+
+          {/* Right Side - Avatar Space & Deploy Button */}
+          <div className="flex flex-col gap-4">
+            {/* Avatar Space */}
+            <div className="h-[300px] rounded-xl border border-slate-800/50 bg-slate-900/50 backdrop-blur-sm ring-1 ring-white/10 relative z-10">
+              {/* Avatar will be integrated here */}
+            </div>
+
+            {/* Deploy Button */}
+            <button className="w-full py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 transition-all duration-300 text-sm font-medium text-white shadow-lg shadow-emerald-500/20">
+              Deploy Workflow
+            </button>
           </div>
         </div>
       )}
